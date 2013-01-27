@@ -1,0 +1,121 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Nibble</title>
+        <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+        <link rel="stylesheet" href="css/bootstrap.css" type="text/css" />
+        <link rel="stylesheet" href="css/styles.css" type="text/css" />
+    </head>
+    <body>
+        <div class="container">            
+            <div class="page-header">
+                <h1>Nibble</h1>
+                <p class="lead">Advanced Scripting Synthesis</p>
+            </div>
+            <div class="well">
+                <div class="row">
+                    <div class="span6">
+                        <div class="controls input-append">
+                            <input class="ft1 input-block-level" type="text" placeholder="f(t)" value="(t*5&amp;t>>7)|(t*3&amp;t>>10)">
+                            <div class="btn-group" data-toggle="buttons-radio">
+                                <button type="button" id="ft1Play" class="btn btn-primary"><i class="icon-play"></i></button>
+                                <button type="button" id="ft1Pause" class="btn btn-primary"><i class="icon-stop"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="span4 pull-right">
+                        <select id="updateBitrate" class="input-small">
+                            <option value="1">1bit</option>
+                            <option value="2">2bit</option>
+                            <option value="3">3bit</option>
+                            <option value="4">4bit</option>
+                            <option value="5">5bit</option>
+                            <option value="6">6bit</option>
+                            <option value="7">7bit</option>
+                            <option value="8">8bit</option>
+                            <option value="9">9bit</option>
+                            <option value="10">10bit</option>
+                            <option value="11">11bit</option>
+                            <option value="12">12bit</option>
+                            <option value="13">13bit</option>
+                            <option value="14">14bit</option>
+                            <option value="15">15bit</option>
+                            <option value="16" selected="selected">16bit</option>
+                        </select>
+                        <select id="updateSampleRate" class="input-medium">
+                            <option value="8000">8000 Hz</option>
+                            <option value="11025">11025Hz</option>
+                            <option value="16000">16000Hz</option>
+                            <option value="22050">22050Hz</option>
+                            <option value="32000">32000Hz</option>
+                            <option value="44056">44056Hz</option>
+                            <option value="44100">44100Hz</option>
+                            <option value="47250">47250Hz</option>
+                            <option value="48000">48100Hz</option>
+                            <option value="50000">50000Hz</option>
+                            <option value="50400">50400Hz</option>
+                            <option value="88200">88200Hz</option>
+                            <option value="96000">96000Hz</option>
+                            <option value="176400">176400Hz</option>
+                            <option value="192000" selected="selected">192000Hz</option>
+                            <option value="352800">352800Hz</option>
+                            <option value="2822400">2822400Hz</option>
+                            <option value="5644800">5644800Hz</option>
+                        </select>
+                    </div>
+                </div><br />
+                <div class="row">
+                    <div class="span9">
+                        key |
+                        <a id="abs" href="#" rel="tooltip">abs</a> |
+                        <a id="exp" href="#" rel="tooltip">exp</a> |
+                        <a id="round" href="#" rel="tooltip">round</a> |
+                        <a id="sqrt" href="#" rel="tooltip">sqrt</a> |
+                        <a id="sin" href="#" rel="tooltip">sin</a> |
+                        <a id="cos" href="#" rel="tooltip">cos</a> |
+                        <a id="tan" href="#" rel="tooltip">tan</a> |
+                        <a id="floor" href="#" rel="tooltip">floor</a> |
+                        <a id="ceil" href="#" rel="tooltip">ceil</a> |
+                        <a id="log" href="#" rel="tooltip">log</a> |
+                        <a id="PI" href="#" rel="tooltip">PI</a> |
+                        <a id="E" href="#" rel="tooltip">E</a>
+                    </div>
+                </div>
+            </div>
+            <div class="well">
+                <div class="row">
+                    <div class="span6">
+                        <canvas id="wave" width="512" height="300" style="display: block; background-color: #000; padding:10px; border:1px solid #fff;"></canvas>
+                    </div>
+                    <div class="span2 pull-right">
+                        <label>Delay Mix</label><input id="delayWet" value="0"><br/>
+                        <label>Main Output</label><input id="mainOutput" value="25"><br/>
+                    </div>
+                    <div class="span2 pull-right">
+                        <label>Delay Time</label><input id="delayTime" value="0"><br/>
+                        <label>Delay Feedback</label><input id="delayFeedback" value="50"><br/>
+                        <label>Feedback Filter</label><input id="delayFilter" value="20000">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript" src="js/jquery-1.8.3.js"></script>
+        <script type="text/javascript" src="js/bootstrap.js"></script>
+        <script type="text/javascript" src="js/jquery.kontrol.js"></script>
+        <script type="text/javascript" src="js/nibble.js"></script>    
+        <div id="audioError" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="audioError" aria-hidden="true">
+            <div class="modal-header">
+                <h2>Unsupported Browser</h2>
+            </div>
+            <div class="modal-body">
+                <h3>Please install one of the following <strong>Web Audio</strong> compatible browsers :</h3>
+                <div class="well">
+                    <a href="https://www.google.com/intl/en/chrome/browser/">Google Chrome</a>
+                </div>
+                <div class="well">
+                    <a href="http://www.apple.com/safari/">Safari 6</a>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

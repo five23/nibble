@@ -10,7 +10,7 @@ $(window)
         var t = 0,
             i = 0,
             outBuffer,
-            context,            
+            context,
             lastGain = 0.5;
 
         if (typeof AudioContext === "function") {
@@ -26,7 +26,6 @@ $(window)
         }
 
         var nibble = new Object({
-            bufferSize: 2048,
             outputChannels: 1,
             bitRate: 8,
             defaultSampleRate: 44100,
@@ -49,7 +48,7 @@ $(window)
             delayFeedback: context.createGain(),
             mainOutput: context.createGain(),
             compressor: context.createDynamicsCompressor(),
-            scriptProcessor: context.createScriptProcessor(2048, 0, 1),
+            scriptProcessor: context.createScriptProcessor(0, 0, 1),
             ctx: $("#wave").get()[0].getContext("2d"),
             viewport: document.getElementById("viewport"),
             bitDivisor: function () {
@@ -61,11 +60,8 @@ $(window)
             thetaIncrement: function () {
                 return (this.targetSampleRate / this.defaultSampleRate);
             },
-            osc1PhaseIncrement: function () {
-                return Math.TAU * this.osc1Freq / this.defaultSampleRate;
-            },
-            osc2PhaseIncrement: function () {
-                return Math.TAU * this.osc2Freq / this.defaultSampleRate;
+            phaseIncrement: function(frequency) {
+                return Math.TAU * frequency / this.defaultSampleRate;
             },
             ft1: function () {
                 return (t | i);
@@ -88,9 +84,8 @@ $(window)
 
                 this.analyser.getByteTimeDomainData(this.freqBin);
 
-                for (i = 0; i < this.bufferSize; i += 1) {
+                for (i = 0; i < outBuffer.length; i += 1) {
                     this.frame(i);
-                    
                     this.ctx.fillRect(i, this.freqBin[i], 1, 1);
                 }
             },
@@ -100,7 +95,7 @@ $(window)
 
                 var _ft1 = this.bitShift(this.ft1(t));
 
-                this.osc1Phase += this.osc1PhaseIncrement();
+                this.osc1Phase += this.phaseIncrement(this.osc1Freq);
 
                 if (this.osc1Phase >= Math.TAU) {
                     this.osc1Phase -= Math.TAU;
@@ -108,7 +103,7 @@ $(window)
 
                 var _osc1 = 0.5 * this.oscSine(this.osc1Phase, this.osc1Mod, _ft1);
 
-                this.osc2Phase += this.osc2PhaseIncrement();
+                this.osc2Phase += this.phaseIncrement(this.osc2Freq);
 
                 if (this.osc2Phase >= Math.TAU) {
                     this.osc2Phase -= Math.TAU;
@@ -138,13 +133,12 @@ $(window)
                 this.delayWet.connect(this.compressor);
                 this.scriptProcessor.connect(this.compressor);
                 this.compressor.connect(this.mainOutput);
-                this.analyser.fftSize = this.bufferSize;
                 this.analyser.smoothingTimeConstant = 0.5;
                 this.freqBin = new Uint8Array(this.analyser.frequencyBinCount);
                 this.ctx.canvas.width = this.viewport.clientWidth;
                 this.ctx.canvas.height = this.viewport.clientHeight;
                 this.ctx.fillStyle = "#fff";
-                
+
                 $('.ft1').keyup(function () {
 
                     var v = $(this).val()
@@ -242,7 +236,7 @@ $(window)
                     width: 20,
                     values: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16],
                     texts: ["1bit", "2bit", "3bit", "4bit", "5bit", "6bit", "7bit", "8bit",
-                    "9bit", "10bit", "11bit", "12bit", "13bit", "14bit", "15bit", "16bit"]                    
+                    "9bit", "10bit", "11bit", "12bit", "13bit", "14bit", "15bit", "16bit"]
                 }).value.bind(this, "bitRate");
 
                 var sampleRateGui = new gui.DropDown({
@@ -251,7 +245,7 @@ $(window)
                     values: [8000, 11025, 16000, 22050, 32000, 44056, 44100, 47250, 48100, 50000, 50400, 88200,
                      96000, 176400, 192000, 352800, 2822400, 5644800],
                     texts: ["8000Hz", "11025Hz", "16000Hz", "22050Hz", "32000Hz", "44056Hz", "44100Hz", "47250Hz",
-                    "48100Hz", "50000Hz", "50400Hz", "88200Hz", "96000Hz", "176400Hz", "192000Hz", "352800Hz", "2822400Hz", "5644800Hz"]                    
+                    "48100Hz", "50000Hz", "50400Hz", "88200Hz", "96000Hz", "176400Hz", "192000Hz", "352800Hz", "2822400Hz", "5644800Hz"]
                 }).value.bind(this, "targetSampleRate");
 
                 var sampleRateKnobGui = new gui.HSlider({

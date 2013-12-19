@@ -29,16 +29,18 @@ $(window)
             outputChannels: 1,
             bitRate: 8,
             defaultSampleRate: 44100,
-            targetSampleRate: 32962,
+            targetSampleRate: 8000,
             scriptGain: 0.5,
             osc1Gain: 0.0,
             osc1Mod: 0.0,
             osc1Freq: 440,
             osc1Phase: 0,
+            osc1Theta: false,
             osc2Gain: 0.0,
             osc2Mod: 0.0,
             osc2Freq: 440,
             osc2Phase: 0,
+            osc2Theta: false,
             freqBin: 0,
             analyser: context.createAnalyser(),
             delayInput: context.createGain(),
@@ -60,7 +62,7 @@ $(window)
             thetaIncrement: function () {
                 return (this.targetSampleRate / this.defaultSampleRate);
             },
-            phaseIncrement: function(frequency) {
+            phaseIncrement: function (frequency) {
                 return Math.TAU * frequency / this.defaultSampleRate;
             },
             ft1: function () {
@@ -85,11 +87,21 @@ $(window)
                 this.analyser.getByteTimeDomainData(this.freqBin);
 
                 for (i = 0; i < outBuffer.length; i += 1) {
-                    this.frame(i);
+
                     this.ctx.fillRect(i, this.freqBin[i], 1, 1);
+
+                    this.frame();
+                }
+
+                if (this.osc1Phase >= Math.TAU) {
+                    this.osc1Phase -= Math.TAU;
+                }
+
+                if (this.osc2Phase >= Math.TAU) {
+                    this.osc2Phase -= Math.TAU;
                 }
             },
-            frame: function (i) {
+            frame: function () {
 
                 t += this.thetaIncrement();
 
@@ -97,16 +109,16 @@ $(window)
 
                 this.osc1Phase += this.phaseIncrement(this.osc1Freq);
 
-                if (this.osc1Phase >= Math.TAU) {
-                    this.osc1Phase -= Math.TAU;
+                if (this.osc1Theta) {
+                    this.osc1Phase += this.thetaIncrement();
                 }
 
                 var _osc1 = 0.5 * this.oscSine(this.osc1Phase, this.osc1Mod, _ft1);
 
                 this.osc2Phase += this.phaseIncrement(this.osc2Freq);
 
-                if (this.osc2Phase >= Math.TAU) {
-                    this.osc2Phase -= Math.TAU;
+                if (this.osc2Theta) {
+                    this.osc2Phase += this.thetaIncrement();
                 }
 
                 var _osc2 = 0.5 * this.oscSine(this.osc2Phase, this.osc2Mod, _osc1);
@@ -133,7 +145,6 @@ $(window)
                 this.delayWet.connect(this.compressor);
                 this.scriptProcessor.connect(this.compressor);
                 this.compressor.connect(this.mainOutput);
-                this.analyser.smoothingTimeConstant = 0.5;
                 this.freqBin = new Uint8Array(this.analyser.frequencyBinCount);
                 this.ctx.canvas.width = this.viewport.clientWidth;
                 this.ctx.canvas.height = this.viewport.clientHeight;
@@ -172,156 +183,238 @@ $(window)
 
                 var gui = new xgui({
                     width: 890,
-                    height: 145
+                    height: 175
                 });
 
                 document.getElementById('xgui').appendChild(gui.getDomElement());
 
                 var scriptGainGui = new gui.Knob({
-                    x: 0,
-                    y: 2,
+                    x: 5,
+                    y: 20,
                     radius: 25,
                     value: 0.5,
-                    min: 0.0,
-                    max: 1.0,
+                    min: 0,
+                    max: 1,
                     decimals: 2
                 }).value.bind(this, "scriptGain");
 
-                var osc1GainGui = new gui.HSlider({
+                var scriptGainLabel = new gui.Label({
                     x: 0,
-                    y: 80,
-                    value: 0,
-                    min: 0,
-                    max: 1,
-                    width: 80,
-                    height: 20,
-                    decimals: 2
-                }).value.bind(this, "osc1Gain");
+                    y: 0,
+                    text: "Input Gain"
+                });
 
-                var osc1ModGui = new gui.Knob({
-                    x: 95,
-                    y: 70,
-                    radius: 30,
-                    value: 0.0,
-                    min: 0.0,
-                    max: 1.0,
-                    decimals: 2
-                }).value.bind(this, "osc1Mod");
-
-                var osc2GainGui = new gui.HSlider({
-                    x: 0,
-                    y: 105,
-                    value: 0,
-                    min: 0,
-                    max: 1,
-                    width: 80,
-                    height: 20,
-                    decimals: 2
-                }).value.bind(this, "osc2Gain");
-
-                var osc2ModGui = new gui.Knob({
-                    x: 170,
-                    y: 70,
-                    radius: 30,
-                    value: 0.0,
-                    min: 0.0,
-                    max: 100.0,
-                    decimals: 2
-                }).value.bind(this, "osc2Mod");
-
-                var bitRateGui = new gui.DropDown({
-                    x: 65,
-                    y: 9,
-                    height: 30,
-                    width: 20,
-                    values: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16],
-                    texts: ["1bit", "2bit", "3bit", "4bit", "5bit", "6bit", "7bit", "8bit",
-                    "9bit", "10bit", "11bit", "12bit", "13bit", "14bit", "15bit", "16bit"]
+                var bitRateGui = new gui.Knob({
+                    x: 70,
+                    y: 20,
+                    radius: 25,
+                    value: 8,
+                    min: 1,
+                    max: 16,
+                    step: 1
                 }).value.bind(this, "bitRate");
 
-                var sampleRateGui = new gui.DropDown({
-                    x: 65,
-                    y: 29,
-                    values: [8000, 11025, 16000, 22050, 32000, 44056, 44100, 47250, 48100, 50000, 50400, 88200,
-                     96000, 176400, 192000, 352800, 2822400, 5644800],
-                    texts: ["8000Hz", "11025Hz", "16000Hz", "22050Hz", "32000Hz", "44056Hz", "44100Hz", "47250Hz",
-                    "48100Hz", "50000Hz", "50400Hz", "88200Hz", "96000Hz", "176400Hz", "192000Hz", "352800Hz", "2822400Hz", "5644800Hz"]
-                }).value.bind(this, "targetSampleRate");
+                var bitRateLabel = new gui.Label({
+                    x: 70,
+                    y: 0,
+                    text: "Bit Rate"
+                });
 
-                var sampleRateKnobGui = new gui.HSlider({
-                    x: 180,
-                    y: 8,
-                    value: 44100.0,
-                    width: 685,
-                    height: 36,
-                    min: 0.0,
+                var sampleRateGui = new gui.HSlider({
+                    x: 140,
+                    y: 25,
+                    value: 8000.0,
+                    width: 720,
+                    height: 40,
+                    min: 8000.0,
                     max: 5644800.0,
                 }).value.bind(this, "targetSampleRate");
 
-                var delayWetGui = new gui.Knob({
-                    x: 510,
-                    y: 70,
+                var sampleRateLabel = new gui.Label({
+                    x: 140,
+                    y: 0,
+                    text: "Sample Rate (Hz)"
+                });
+
+                var osc1GainGui = new gui.Knob({
+                    x: 5,
+                    y: 110,
+                    value: 0,
+                    radius: 25,
+                    min: 0,
+                    max: 1,
+                    decimals: 2
+                }).value.bind(this, "osc1Gain");
+
+                var osc1GainLabel = new gui.Label({
+                    x: 0,
+                    y: 90,
+                    text: "Osc 1 Gain"
+                });
+
+                var osc1ModGui = new gui.Knob({
+                    x: 70,
+                    y: 110,
+                    radius: 25,
                     value: 0.0,
-                    radius: 30,
+                    min: 0.0,
+                    max: 1.0,
+                    decimals: 3
+                }).value.bind(this, "osc1Mod");
+
+                var osc1ModLabel = new gui.Label({
+                    x: 70,
+                    y: 90,
+                    text: "Osc 1 Mod"
+                });
+
+                var osc2GainGui = new gui.Knob({
+                    x: 135,
+                    y: 110,
+                    radius: 25,
+                    value: 0,
+                    min: 0,
+                    max: 1,
+                    decimals: 2
+                }).value.bind(this, "osc2Gain");
+
+                var osc2GainLabel = new gui.Label({
+                    x: 135,
+                    y: 90,
+                    text: "Osc 2 Gain"
+                });
+
+                var osc2ModGui = new gui.Knob({
+                    x: 200,
+                    y: 110,
+                    radius: 25,
+                    value: 0.0,
+                    min: 0.0,
+                    max: 1000.0,
+                    decimals: 3
+                }).value.bind(this, "osc2Mod");
+
+                var osc2ModLabel = new gui.Label({
+                    x: 200,
+                    y: 90,
+                    text: "Osc 2 Mod"
+                });
+
+                var oscFreqGui = new gui.TrackPad({
+                    x: 265,
+                    y: 110,
+                    width: 270,
+                    height: 50,
+                    min: 0,
+                    max: 440,
+                    decimals: 2
+                });
+
+                oscFreqGui.value1.bind(this, "osc1Freq");
+                oscFreqGui.value2.bind(this, "osc2Freq");
+
+                var oscFreqLabel = new gui.Label({
+                    x: 265,
+                    y: 90,
+                    text: "Osc 1 / 2 Freq"
+                });
+
+                var osc1ThetaGui = new gui.CheckBox({
+                    x: 380,
+                    y: 90,
+                    text: " Osc 1 Theta",
+                    selected: false
+                }).value.bind(this, "osc1Theta");
+
+                var osc2ThetaGui = new gui.CheckBox({
+                    x: 460,
+                    y: 90,
+                    text: " Osc 2 Theta",
+                    selected: false
+                }).value.bind(this, "osc2Theta");
+
+                var delayWetGui = new gui.Knob({
+                    x: 550,
+                    y: 110,
+                    value: 0.0,
+                    radius: 25,
                     min: 0.0,
                     max: 0.9,
                     step: 0.0001,
                     decimals: 4
                 }).value.bind(this.delayWet.gain, "value");
 
+                var delayWetLabel = new gui.Label({
+                    x: 550,
+                    y: 90,
+                    text: "Delay Mix"
+                });
+
                 var delayFeedbackGui = new gui.Knob({
-                    x: 585,
-                    y: 70,
+                    x: 615,
+                    y: 110,
                     value: 0.0,
-                    radius: 30,
+                    radius: 25,
                     min: 0.0,
                     max: 0.85,
                     step: 0.0001,
                     decimals: 4
                 }).value.bind(this.delayFeedback.gain, "value");
 
+                var delayFeedbackLabel = new gui.Label({
+                    x: 615,
+                    y: 90,
+                    text: "Feedback"
+                });
+
                 var delayTimeGui = new gui.Knob({
-                    x: 660,
-                    y: 70,
+                    x: 680,
+                    y: 110,
                     value: 0.0,
-                    radius: 30,
+                    radius: 25,
                     min: 0.0,
                     max: 0.01,
                     step: 0.0001,
                     decimals: 4
                 }).value.bind(this.delayNode.delayTime, "value");
 
+                var delayTimeLabel = new gui.Label({
+                    x: 680,
+                    y: 90,
+                    text: "Delay Time"
+                });
+
                 var delayFilterGui = new gui.Knob({
-                    x: 735,
-                    y: 70,
+                    x: 745,
+                    y: 110,
                     value: 0.0,
-                    radius: 30,
+                    radius: 25,
                     min: 0,
                     max: 22050,
                     decimals: 2
                 }).value.bind(this.delayFilter.frequency, "value");
 
+                var delayFilterLabel = new gui.Label({
+                    x: 745,
+                    y: 90,
+                    text: "Delay Filter"
+                });
+
                 var mainOutGui = new gui.Knob({
                     x: 810,
-                    y: 70,
+                    y: 110,
                     value: 0.5,
-                    radius: 30,
+                    radius: 25,
                     min: 0,
                     max: 1.0,
                     decimals: 2
                 }).value.bind(this.mainOutput.gain, "value");
 
-                var oscGui = new gui.TrackPad({
-                    x: 245,
-                    y: 70,
-                    width: 250,
-                    min: 0,
-                    max: 440,
-                    decimals: 2
+                var mainOutLabel = new gui.Label({
+                    x: 810,
+                    y: 90,
+                    text: "Output Gain"
                 });
-
-                oscGui.value1.bind(this, "osc1Freq");
-                oscGui.value2.bind(this, "osc2Freq");
             },
             initPopovers: function () {
 

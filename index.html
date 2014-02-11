@@ -1,51 +1,86 @@
-<!doctype html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Nibble by five23</title>
+<!DOCTYPE html>
+<html lang="en">
 
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-  </head>
-  <body>
-    <div class="wrapper">
-      <header>
-        <h1>Nibble</h1>
-        <p></p>
+<head>
+    <title>Nibble</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css" />
+</head>
 
-        <p class="view"><a href="https://github.com/five23/nibble">View the Project on GitHub <small>five23/nibble</small></a></p>
-
-
-        <ul>
-          <li><a href="https://github.com/five23/nibble/zipball/master">Download <strong>ZIP File</strong></a></li>
-          <li><a href="https://github.com/five23/nibble/tarball/master">Download <strong>TAR Ball</strong></a></li>
-          <li><a href="https://github.com/five23/nibble">View On <strong>GitHub</strong></a></li>
-        </ul>
-      </header>
-      <section>
-        <p>Nibble 2 (beta), expanding into the complex plane (synthesis as a function time and imaginary time),
-adding four dimensional gradients, (Perlin) simplex &amp; signed noise functions, two serial injection
-locked oscillators (with phase modulation), interpolation, mapping, clamping, direct buffer access, and more.</p>
-
-<p>Inspired by Viznut's Bytebeat phenomenon.</p>
-
-<p>Try it here : <a href="http://five23.github.com/nibble/index.html">http://five23.github.com/nibble/index.html</a></p>
-
-<p>GUI (knobs/sliders) built using xgui.js (<a href="https://github.com/oosmoxiecode/xgui.js">https://github.com/oosmoxiecode/xgui.js</a>)</p>
-
-<p>Interface built using Bootstrap 3 (<a href="http://getbootstrap.com/">http://getbootstrap.com/</a>) and jQuery 1.10.2 (<a href="http://jquery.com/">http://jquery.com/</a>)</p>
-      </section>
-      <footer>
-        <p>This project is maintained by <a href="https://github.com/five23">five23</a></p>
-        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
-      </footer>
+<body>
+    <div class="container" style="width:940px;">
+        <div class="row">
+            <a id="nibble" href="#" rel="tooltip">
+                <img src="img/nibble.png" style="width:128px;" />
+            </a>
+        </div>
+        <div class="well">
+            <div class="row">
+                <form class="form-inline" role="form">
+                    <div class="form-group col-xs-10">
+                        <input class="ft1 form-control" type="text" placeholder="f(t,i)" value="i | t">
+                    </div>
+                    <div class="btn-group col-xs-2">
+                        <button type="button" id="ft1Play" class="btn btn-primary">
+                            <span class="glyphicon glyphicon-play"></span>
+                        </button>
+                        <button type="button" id="ft1Pause" class="btn btn-primary">
+                            <span class="glyphicon glyphicon-stop"></span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <a id="abs" href="#" rel="tooltip">abs</a>&nbsp;|
+                    <a id="exp" href="#" rel="tooltip">exp</a>&nbsp;|
+                    <a id="round" href="#" rel="tooltip">round</a>&nbsp;|
+                    <a id="sqrt" href="#" rel="tooltip">sqrt</a>&nbsp;|
+                    <a id="sin" href="#" rel="tooltip">sin</a>&nbsp;|
+                    <a id="cos" href="#" rel="tooltip">cos</a>&nbsp;|
+                    <a id="tan" href="#" rel="tooltip">tan</a>&nbsp;|
+                    <a id="floor" href="#" rel="tooltip">floor</a>&nbsp;|
+                    <a id="log" href="#" rel="tooltip">log</a>&nbsp;|
+                    <a id="PI" href="#" rel="tooltip">PI</a>&nbsp;|
+                    <a id="E" href="#" rel="tooltip">E</a>&nbsp;|
+                    <a id="lerp" href="#" rel="tooltip">lerp</a>&nbsp;|
+                    <a id="clamp" href="#" rel="tooltip">clamp</a>&nbsp;|
+                    <a id="normalize" href="#" rel="tooltip">normalize</a>&nbsp;|
+                    <a id="map" href="#" rel="tooltip">map</a>&nbsp;|
+                    <a id="gradient" href="#" rel="tooltip">gradient</a>&nbsp;|
+                    <a id="simplexNoise" href="#" rel="tooltip">simplexNoise</a>&nbsp;|
+                    <a id="signedNoise" href="#" rel="tooltip">signedNoise</a>&nbsp;|
+                    <a id="outBuffer" href="#" rel="tooltip">outBuffer</a>
+                </div>
+            </div>
+        </div>
+        <div class="well">
+            <div id="viewport" style="height:300px; background-color:#000;">
+                <canvas id="wave"></canvas>
+            </div>
+        </div>
+        <div class="well">
+            <div id="xgui"></div>
+        </div>
     </div>
-    <script src="javascripts/scale.fix.js"></script>
-    
-  </body>
+    <div id="audioError" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="audioError" aria-hidden="true">
+        <div class="modal-header">
+            <h2>Unsupported Browser</h2>
+        </div>
+        <div class="modal-body">
+            <h3>Please install one of the following
+                <strong>Web Audio</strong>compatible browsers :</h3>
+            <div class="well">
+                <a href="https://www.google.com/intl/en/chrome/browser/">Google Chrome</a>
+            </div>
+            <div class="well">
+                <a href="http://www.apple.com/safari/">Safari 6</a>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="js/xgui.min.js"></script>
+    <script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/nibble.js"></script>
+</body>
+
 </html>

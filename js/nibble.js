@@ -4,7 +4,7 @@
 Math.TAU = 2.0 * Math.PI;
 
 $(window)
-    .load(function () {
+    .on('load', function () {
         "use strict";
 
         var t = 0,

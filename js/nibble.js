@@ -130,8 +130,6 @@ $(window)
                 this.compressor.knee.value = 12.0;
                 this.compressor.ratio.value = 12.0;
                 this.compressor.attack.value = 0.1;
-                this.compressor.release.value = 2.0;
-                this.compressor.reduction.value = 14.0;
                 this.mainOutput.gain.value = 0.5;
                 this.delayInput.gain.value = 1.0;
                 this.delayFeedback.gain.value = 0.0;

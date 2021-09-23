@@ -4,8 +4,8 @@ locked oscillators (with phase modulation), interpolation, mapping, clamping, di
 
 Inspired by Viznut's Bytebeat phenomenon.
 
-Try it here : http://five23.github.com/nibble/index.html
-
 GUI (knobs/sliders) built using xgui.js (https://github.com/oosmoxiecode/xgui.js)
 
 Interface built using Bootstrap 3 (http://getbootstrap.com/) and jQuery 1.10.2 (http://jquery.com/)
+
+*** TODO: needs to be updated to work w/ modern browsers ****

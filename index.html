@@ -1,86 +1,312 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <title>Nibble</title>
-    <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nibble - Modern Bytebeat Synthesizer</title>
+  <meta name="description" content="A modern bytebeat synthesizer with advanced audio effects, real-time visualization, and patch management">
+  <link rel="icon" type="image/png" href="/img/nibble.png">
 </head>
-
 <body>
-    <div class="container" style="width:940px;">
-        <div class="row">
-            <a id="nibble" href="#" rel="tooltip">
-                <img src="img/nibble.png" style="width:128px;" />
-            </a>
-        </div>
-        <div class="well">
-            <div class="row">
-                <form class="form-inline" role="form">
-                    <div class="form-group col-xs-10">
-                        <input class="ft1 form-control" type="text" placeholder="f(t,i)" value="i | t">
-                    </div>
-                    <div class="btn-group col-xs-2">
-                        <button type="button" id="ft1Play" class="btn btn-primary">
-                            <span class="glyphicon glyphicon-play"></span>
-                        </button>
-                        <button type="button" id="ft1Pause" class="btn btn-primary">
-                            <span class="glyphicon glyphicon-stop"></span>
-                        </button>
-                    </div>
-                </form>
-            </div>
-            <div class="row">
-                <div class="col-xs-12">
-                    <a id="abs" href="#" rel="tooltip">abs</a>&nbsp;|
-                    <a id="exp" href="#" rel="tooltip">exp</a>&nbsp;|
-                    <a id="round" href="#" rel="tooltip">round</a>&nbsp;|
-                    <a id="sqrt" href="#" rel="tooltip">sqrt</a>&nbsp;|
-                    <a id="sin" href="#" rel="tooltip">sin</a>&nbsp;|
-                    <a id="cos" href="#" rel="tooltip">cos</a>&nbsp;|
-                    <a id="tan" href="#" rel="tooltip">tan</a>&nbsp;|
-                    <a id="floor" href="#" rel="tooltip">floor</a>&nbsp;|
-                    <a id="log" href="#" rel="tooltip">log</a>&nbsp;|
-                    <a id="PI" href="#" rel="tooltip">PI</a>&nbsp;|
-                    <a id="E" href="#" rel="tooltip">E</a>&nbsp;|
-                    <a id="lerp" href="#" rel="tooltip">lerp</a>&nbsp;|
-                    <a id="clamp" href="#" rel="tooltip">clamp</a>&nbsp;|
-                    <a id="normalize" href="#" rel="tooltip">normalize</a>&nbsp;|
-                    <a id="map" href="#" rel="tooltip">map</a>&nbsp;|
-                    <a id="gradient" href="#" rel="tooltip">gradient</a>&nbsp;|
-                    <a id="simplexNoise" href="#" rel="tooltip">simplexNoise</a>&nbsp;|
-                    <a id="signedNoise" href="#" rel="tooltip">signedNoise</a>&nbsp;|
-                    <a id="outBuffer" href="#" rel="tooltip">outBuffer</a>
-                </div>
-            </div>
-        </div>
-        <div class="well">
-            <div id="viewport" style="height:300px; background-color:#000;">
-                <canvas id="wave"></canvas>
-            </div>
-        </div>
-        <div class="well">
-            <div id="xgui"></div>
-        </div>
-    </div>
-    <div id="audioError" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="audioError" aria-hidden="true">
-        <div class="modal-header">
-            <h2>Unsupported Browser</h2>
-        </div>
-        <div class="modal-body">
-            <h3>Please install one of the following
-                <strong>Web Audio</strong>compatible browsers :</h3>
-            <div class="well">
-                <a href="https://www.google.com/intl/en/chrome/browser/">Google Chrome</a>
-            </div>
-            <div class="well">
-                <a href="http://www.apple.com/safari/">Safari 6</a>
-            </div>
-        </div>
-    </div>
-    <script type="text/javascript" src="js/jquery-3.1.1.min.js"></script>
-    <script type="text/javascript" src="js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="js/xgui.min.js"></script>
-    <script type="text/javascript" src="js/nibble.js"></script>
-</body>
+  <div class="container">
+    <header>
+      <h1>⚡ NIBBLE ⚡</h1>
+      <p class="subtitle">Modern Bytebeat Synthesizer with Advanced Effects</p>
+    </header>
 
+    <!-- Formula Section -->
+    <section class="formula-section">
+      <h2>Bytebeat Formula</h2>
+      <div class="formula-controls">
+        <input type="text" id="formula-input" placeholder="f(t, i)" value="t | i">
+        <button id="play-btn">▶ Play</button>
+        <button id="stop-btn" disabled>⏹ Stop</button>
+      </div>
+    </section>
+
+    <!-- Visualizer -->
+    <section class="visualizer-section">
+      <h2>Waveform</h2>
+      <canvas id="waveform-canvas"></canvas>
+    </section>
+
+    <!-- Controls Grid -->
+    <div class="controls-grid">
+      <!-- Bytebeat Controls -->
+      <div class="control-panel">
+        <h2>Bytebeat Engine</h2>
+        <div class="control-group">
+          <label>Input Gain</label>
+          <div class="control-row">
+            <input type="range" id="script-gain" min="0" max="1" step="0.01" value="0.5">
+            <span class="value-display" id="script-gain-value">0.50</span>
+          </div>
+        </div>
+        <div class="control-group">
+          <label>Bit Rate</label>
+          <div class="control-row">
+            <input type="range" id="bit-rate" min="1" max="16" step="1" value="8">
+            <span class="value-display" id="bit-rate-value">8</span>
+          </div>
+        </div>
+        <div class="control-group">
+          <label>Sample Rate (Hz)</label>
+          <div class="control-row">
+            <input type="range" id="sample-rate" min="8000" max="5644800" step="1000" value="8000">
+            <span class="value-display" id="sample-rate-value">8000</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Oscillator 1 -->
+      <div class="control-panel">
+        <h2>Oscillator 1</h2>
+        <div class="control-group">
+          <label>Gain</label>
+          <div class="control-row">
+            <input type="range" id="osc1-gain" min="0" max="1" step="0.01" value="0">
+            <span class="value-display" id="osc1-gain-value">0.00</span>
+          </div>
+        </div>
+        <div class="control-group">
+          <label>Modulation</label>
+          <div class="control-row">
+            <input type="range" id="osc1-mod" min="0" max="1" step="0.001" value="0">
+            <span class="value-display" id="osc1-mod-value">0.000</span>
+          </div>
+        </div>
+        <div class="control-group">
+          <label>Frequency (Hz)</label>
+          <div class="control-row">
+            <input type="range" id="osc1-freq" min="0" max="440" step="1" value="440">
+            <span class="value-display" id="osc1-freq-value">440</span>
+          </div>
+        </div>
+        <div class="control-group">
+          <label>
+            <input type="checkbox" id="osc1-theta">
+            Theta Mode
+          </label>
+        </div>
+      </div>
+
+      <!-- Oscillator 2 -->
+      <div class="control-panel">
+        <h2>Oscillator 2</h2>
+        <div class="control-group">
+          <label>Gain</label>
+          <div class="control-row">
+            <input type="range" id="osc2-gain" min="0" max="1" step="0.01" value="0">
+            <span class="value-display" id="osc2-gain-value">0.00</span>
+          </div>
+        </div>
+        <div class="control-group">
+          <label>Modulation</label>
+          <div class="control-row">
+            <input type="range" id="osc2-mod" min="0" max="1000" step="0.001" value="0">
+            <span class="value-display" id="osc2-mod-value">0.000</span>
+          </div>
+        </div>
+        <div class="control-group">
+          <label>Frequency (Hz)</label>
+          <div class="control-row">
+            <input type="range" id="osc2-freq" min="0" max="440" step="1" value="440">
+            <span class="value-display" id="osc2-freq-value">440</span>
+          </div>
+        </div>
+        <div class="control-group">
+          <label>
+            <input type="checkbox" id="osc2-theta">
+            Theta Mode
+          </label>
+        </div>
+      </div>
+
+      <!-- Delay -->
+      <div class="control-panel">
+        <h2>Delay</h2>
+        <div class="control-group">
+          <label>Mix</label>
+          <div class="control-row">
+            <input type="range" id="delay-mix" min="0" max="0.9" step="0.0001" value="0">
+            <span class="value-display" id="delay-mix-value">0.0000</span>
+          </div>
+        </div>
+        <div class="control-group">
+          <label>Feedback</label>
+          <div class="control-row">
+            <input type="range" id="delay-feedback" min="0" max="0.85" step="0.0001" value="0">
+            <span class="value-display" id="delay-feedback-value">0.0000</span>
+          </div>
+        </div>
+        <div class="control-group">
+          <label>Time (s)</label>
+          <div class="control-row">
+            <input type="range" id="delay-time" min="0" max="0.01" step="0.0001" value="0">
+            <span class="value-display" id="delay-time-value">0.0000</span>
+          </div>
+        </div>
+        <div class="control-group">
+          <label>Filter Frequency (Hz)</label>
+          <div class="control-row">
+            <input type="range" id="delay-filter" min="0" max="22050" step="10" value="22050">
+            <span class="value-display" id="delay-filter-value">22050</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filter -->
+      <div class="control-panel">
+        <h2>Filter</h2>
+        <div class="control-group">
+          <label>
+            <input type="checkbox" id="filter-enabled">
+            Enabled
+          </label>
+        </div>
+        <div class="control-group">
+          <label>Type</label>
+          <select id="filter-type">
+            <option value="lowpass">Low Pass</option>
+            <option value="highpass">High Pass</option>
+            <option value="bandpass">Band Pass</option>
+            <option value="notch">Notch</option>
+            <option value="lowshelf">Low Shelf</option>
+            <option value="highshelf">High Shelf</option>
+            <option value="peaking">Peaking</option>
+            <option value="allpass">All Pass</option>
+          </select>
+        </div>
+        <div class="control-group">
+          <label>Frequency (Hz)</label>
+          <div class="control-row">
+            <input type="range" id="filter-freq" min="20" max="20000" step="1" value="1000">
+            <span class="value-display" id="filter-freq-value">1000</span>
+          </div>
+        </div>
+        <div class="control-group">
+          <label>Q / Resonance</label>
+          <div class="control-row">
+            <input type="range" id="filter-q" min="0.1" max="20" step="0.1" value="1">
+            <span class="value-display" id="filter-q-value">1.0</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Phaser -->
+      <div class="control-panel">
+        <h2>Phaser</h2>
+        <div class="control-group">
+          <label>
+            <input type="checkbox" id="phaser-enabled">
+            Enabled
+          </label>
+        </div>
+        <div class="control-group">
+          <label>Rate</label>
+          <div class="control-row">
+            <input type="range" id="phaser-rate" min="0" max="1" step="0.01" value="0.5">
+            <span class="value-display" id="phaser-rate-value">0.50</span>
+          </div>
+        </div>
+        <div class="control-group">
+          <label>Depth</label>
+          <div class="control-row">
+            <input type="range" id="phaser-depth" min="0" max="1" step="0.01" value="0.5">
+            <span class="value-display" id="phaser-depth-value">0.50</span>
+          </div>
+        </div>
+        <div class="control-group">
+          <label>Feedback</label>
+          <div class="control-row">
+            <input type="range" id="phaser-feedback" min="0" max="1" step="0.01" value="0.5">
+            <span class="value-display" id="phaser-feedback-value">0.50</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Saturator -->
+      <div class="control-panel">
+        <h2>Saturation</h2>
+        <div class="control-group">
+          <label>
+            <input type="checkbox" id="saturation-enabled">
+            Enabled
+          </label>
+        </div>
+        <div class="control-group">
+          <label>Amount</label>
+          <div class="control-row">
+            <input type="range" id="saturation-amount" min="0" max="1" step="0.01" value="0">
+            <span class="value-display" id="saturation-amount-value">0.00</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Master -->
+      <div class="control-panel">
+        <h2>Master</h2>
+        <div class="control-group">
+          <label>Output Gain</label>
+          <div class="control-row">
+            <input type="range" id="master-gain" min="0" max="1" step="0.01" value="0.5">
+            <span class="value-display" id="master-gain-value">0.50</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Patch Management -->
+    <section class="patch-section">
+      <h2>Patch Management</h2>
+
+      <div class="preset-controls">
+        <select id="preset-select">
+          <option value="">-- Select Preset --</option>
+        </select>
+        <button id="load-preset-btn">Load Preset</button>
+      </div>
+
+      <div class="patch-controls">
+        <input type="text" id="patch-name-input" placeholder="Patch name...">
+        <button id="save-patch-btn">Save Patch</button>
+        <button id="export-patch-btn">Export Current</button>
+        <button id="import-patch-btn">Import Patch</button>
+        <input type="file" id="import-file-input" accept=".json">
+      </div>
+
+      <h3>Saved Patches</h3>
+      <div id="patch-list" class="patch-list"></div>
+    </section>
+
+    <!-- Function Reference -->
+    <section class="function-reference">
+      <h2>Available Functions</h2>
+      <div class="function-grid">
+        <div class="function-item" title="Returns absolute value of x">abs(x)</div>
+        <div class="function-item" title="Returns E^x">exp(x)</div>
+        <div class="function-item" title="Rounds x to nearest integer">round(x)</div>
+        <div class="function-item" title="Returns square root of x">sqrt(x)</div>
+        <div class="function-item" title="Returns sine of x">sin(x)</div>
+        <div class="function-item" title="Returns cosine of x">cos(x)</div>
+        <div class="function-item" title="Returns tangent of x">tan(x)</div>
+        <div class="function-item" title="Largest integer less than or equal to x">floor(x)</div>
+        <div class="function-item" title="Smallest integer greater than or equal to x">ceil(x)</div>
+        <div class="function-item" title="Returns natural logarithm of x">log(x)</div>
+        <div class="function-item" title="Pi constant (~3.14159)">PI</div>
+        <div class="function-item" title="Euler's constant (~2.718)">E</div>
+        <div class="function-item" title="Time variable">t</div>
+        <div class="function-item" title="Sample index variable">i</div>
+      </div>
+    </section>
+
+    <footer>
+      <p>Built with modern Web Audio API and TypeScript</p>
+      <p>Inspired by <a href="http://canonical.org/~kragen/bytebeat/" target="_blank">Viznut's Bytebeat</a></p>
+      <p>⚠️ Start with low volume - bytebeat can be loud!</p>
+    </footer>
+  </div>
+
+  <script type="module" src="/src/main.ts"></script>
+</body>
 </html>

@@ -1,0 +1,27 @@
+{
+  "name": "nibble-bytebeat-synth",
+  "version": "3.0.0",
+  "description": "Modern bytebeat synthesizer with advanced audio effects",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "type-check": "tsc --noEmit"
+  },
+  "keywords": [
+    "bytebeat",
+    "synthesizer",
+    "web-audio",
+    "audio",
+    "music"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.8"
+  },
+  "dependencies": {}
+}

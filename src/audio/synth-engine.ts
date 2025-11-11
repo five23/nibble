@@ -236,17 +236,19 @@ registerProcessor('bytebeat-processor', BytebeatProcessor);
     this.compressor.connect(this.masterGain);
   }
 
-  play(): void {
+  async play(): Promise<void> {
     if (this.isPlaying) return;
+
+    // Resume context if suspended (modern browsers require this)
+    if (this.context.state === 'suspended') {
+      await this.context.resume();
+    }
 
     this.masterGain.connect(this.analyser);
     this.analyser.connect(this.context.destination);
     this.isPlaying = true;
 
-    // Resume context if suspended
-    if (this.context.state === 'suspended') {
-      this.context.resume();
-    }
+    console.log('Audio playing - Context state:', this.context.state);
   }
 
   stop(): void {

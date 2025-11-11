@@ -25,8 +25,8 @@ export class Controls {
     const playBtn = document.getElementById('play-btn') as HTMLButtonElement;
     const stopBtn = document.getElementById('stop-btn') as HTMLButtonElement;
 
-    playBtn?.addEventListener('click', () => {
-      this.engine.play();
+    playBtn?.addEventListener('click', async () => {
+      await this.engine.play();
       playBtn.disabled = true;
       stopBtn.disabled = false;
     });

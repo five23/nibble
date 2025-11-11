@@ -34,7 +34,7 @@ class App {
       const playBtn = document.getElementById('play-btn') as HTMLButtonElement;
       const stopBtn = document.getElementById('stop-btn') as HTMLButtonElement;
 
-      playBtn?.addEventListener('click', () => {
+      playBtn?.addEventListener('click', async () => {
         this.visualizer?.start();
       });
 
